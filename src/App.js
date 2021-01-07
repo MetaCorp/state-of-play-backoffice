@@ -8,6 +8,8 @@ import { UserCreate, UserEdit, UserList } from './components/admin/users';
 // import { createNetworkInterface } from 'react-apollo';
 import { ApolloClient, InMemoryCache, ApolloLink, HttpLink } from '@apollo/client';
 import { onError } from "@apollo/client/link/error";
+import { setContext } from '@apollo/client/link/context';
+
 
 import {
   GET_LIST,
@@ -21,6 +23,8 @@ import {
 
 import pluralize from 'pluralize';
 
+import authProvider from './authProvider'
+
 
 const link = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
@@ -33,12 +37,24 @@ const link = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('token');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    }
+  }
+});
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link: ApolloLink.from([link, new HttpLink({
+  link: ApolloLink.from([link, authLink, new HttpLink({
     // uri: 'https://housely-server.ew.r.appspot.com/graphql'
     uri: 'http://localhost:4000/graphql'
-  })])
+  })]),
 });
 
 const firstLowerCase = str => str.charAt(0).toLowerCase() + str.slice(1);
@@ -76,7 +92,7 @@ class App extends Component {
       }
 
       return (
-        <Admin dataProvider={dataProvider}>
+        <Admin authProvider={authProvider(client)} dataProvider={dataProvider}>
           <Resource name="User" list={UserList} edit={UserEdit} create={UserCreate} />
         </Admin>
       );

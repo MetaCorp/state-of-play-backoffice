@@ -11,6 +11,7 @@ const buildFieldList = (name) => {
 				lastName
 				email
 				credits
+				isAdmin
 			`
 		case 'user':
 			return `
@@ -19,6 +20,7 @@ const buildFieldList = (name) => {
 				lastName
 				email
 				credits
+				isAdmin
 			`
 		case 'updateUserAdmin':
 			return `
@@ -27,6 +29,7 @@ const buildFieldList = (name) => {
 				lastName
 				email
 				credits
+				isAdmin
 			`
 	}
 }

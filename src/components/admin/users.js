@@ -13,6 +13,8 @@ import {
 	ReferenceManyField,
 	DateField,
 	EditButton,
+	BooleanField,
+	BooleanInput,
 	required
 } from 'react-admin';
 
@@ -36,6 +38,7 @@ export const UserEdit = (props) => {
 					<TextInput source="firstName" validate={required()} />
 					<TextInput source="lastName" validate={required()} />
 					<NumberInput source="credits" validate={required()} />
+					<BooleanInput source="isAdmin" validate={required()} />
 					{/* <TextInput multiline source="teaser" validate={required()} /> */}
 					{/* <RichTextInput source="body" validate={required()} /> */}
 					{/* <DateInput label="Publication date" source="published_at" /> */}
@@ -87,6 +90,7 @@ export const UserList = ({ permissions, ...props }) => {
 					<TextField source="lastName" />
 					<TextField source="email" />
 					<TextField source="credits" />
+					<BooleanField source="isAdmin" />
 					{permissions === 'admin' && <TextField source="role" />}
 				</Datagrid>
 			)}
